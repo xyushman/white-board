@@ -2,7 +2,31 @@ import { and, desc, eq, isNull } from "drizzle-orm";
 import { getDb, schema } from "@/db";
 import type { BoardSummary, BoardData } from "@/lib/types";
 
-function toSummary(row: typeof schema.whiteboards.$inferSelect): BoardSummary {
+// Select only the columns dashboard needs — avoids transferring potentially
+// megabytes of base64 thumbnail data per page load.
+const summaryColumns = {
+  id: schema.whiteboards.id,
+  title: schema.whiteboards.title,
+  thumbnail: schema.whiteboards.thumbnail,
+  favorited: schema.whiteboards.favorited,
+  deletedAt: schema.whiteboards.deletedAt,
+  archivedAt: schema.whiteboards.archivedAt,
+  createdAt: schema.whiteboards.createdAt,
+  updatedAt: schema.whiteboards.updatedAt,
+};
+
+type SummaryRow = {
+  id: string;
+  title: string;
+  thumbnail: string | null;
+  favorited: boolean;
+  deletedAt: Date | null;
+  archivedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+function toSummary(row: SummaryRow): BoardSummary {
   return {
     id: row.id,
     title: row.title,
@@ -31,7 +55,7 @@ export async function listBoards(
         : base;
 
   const rows = await db
-    .select()
+    .select(summaryColumns)
     .from(schema.whiteboards)
     .where(where)
     .orderBy(desc(schema.whiteboards.updatedAt));
@@ -68,11 +92,13 @@ export async function getBoard(
 export async function getBoardByShareToken(
   token: string,
 ): Promise<typeof schema.whiteboards.$inferSelect | null> {
+  const clean = typeof token === "string" ? token.trim() : "";
+  if (!clean) return null;
   const db = getDb();
   const [row] = await db
     .select()
     .from(schema.whiteboards)
-    .where(eq(schema.whiteboards.shareToken, token))
+    .where(eq(schema.whiteboards.shareToken, clean))
     .limit(1);
   return row ?? null;
 }

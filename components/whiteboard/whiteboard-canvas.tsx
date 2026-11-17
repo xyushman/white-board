@@ -8,6 +8,7 @@ import { captureThumbnail } from "@/lib/export";
 import type { BoardData } from "@/lib/types";
 
 const AUTOSAVE_DELAY = 1500;
+const THUMBNAIL_THROTTLE_MS = 30_000;
 
 export function WhiteboardCanvas({ board }: { board: BoardData }) {
   const setApi = useWhiteboardStore((s) => s.setApi);
@@ -24,22 +25,33 @@ export function WhiteboardCanvas({ board }: { board: BoardData }) {
     files: Record<string, unknown>;
   } | null>(null);
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
+  const lastThumbnailTime = useRef<number>(0);
 
   useEffect(() => {
     setBoardId(board.id);
     setTitle(board.title);
   }, [board.id, board.title, setBoardId, setTitle]);
 
-  const flush = useCallback(async () => {
+  const flush = useCallback(async (forceThumbnail = false) => {
     const data = pending.current;
     const currentApi = apiRef.current;
     if (!data && !currentApi) return;
     pending.current = null;
     setSaving(true);
     try {
-      const thumbnail = currentApi
-        ? await captureThumbnail(currentApi)
-        : null;
+      const now = Date.now();
+      const shouldCaptureThumbnail =
+        currentApi &&
+        (forceThumbnail ||
+          lastThumbnailTime.current === 0 ||
+          now - lastThumbnailTime.current > THUMBNAIL_THROTTLE_MS);
+
+      let thumbnail: string | null | undefined = undefined;
+      if (shouldCaptureThumbnail && currentApi) {
+        thumbnail = await captureThumbnail(currentApi);
+        lastThumbnailTime.current = now;
+      }
+
       await fetch(`/api/boards/${board.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -47,7 +59,7 @@ export function WhiteboardCanvas({ board }: { board: BoardData }) {
           elements: data?.elements ?? [],
           appState: data?.appState ?? {},
           files: data?.files ?? {},
-          ...(thumbnail ? { thumbnail } : {}),
+          ...(thumbnail !== undefined ? { thumbnail } : {}),
         }),
       });
       setSaved();
@@ -76,7 +88,7 @@ export function WhiteboardCanvas({ board }: { board: BoardData }) {
   useEffect(() => {
     return () => {
       if (timer.current) clearTimeout(timer.current);
-      void flush();
+      void flush(true);
     };
   }, [flush]);
 

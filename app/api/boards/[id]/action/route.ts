@@ -10,16 +10,23 @@ type ActionBody = { action?: "archive" | "unarchive" | "restore" };
 export async function POST(request: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const user = await getDbUserOrUpsert();
-    const board = await getBoard(user.id, id);
-    if (!board) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!id || typeof id !== "string") {
+      return NextResponse.json({ error: "Invalid board ID" }, { status: 400 });
     }
 
     const body = (await request.json().catch(() => ({}))) as ActionBody;
     const action = body.action;
-    if (!action) {
-      return NextResponse.json({ error: "Missing action" }, { status: 400 });
+    if (!action || !["archive", "unarchive", "restore"].includes(action)) {
+      return NextResponse.json(
+        { error: "Invalid or missing action. Allowed: archive, unarchive, restore" },
+        { status: 400 },
+      );
+    }
+
+    const user = await getDbUserOrUpsert();
+    const board = await getBoard(user.id, id);
+    if (!board) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
     const update: Partial<typeof schema.whiteboards.$inferInsert> = {

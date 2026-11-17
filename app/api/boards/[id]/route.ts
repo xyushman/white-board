@@ -20,6 +20,10 @@ type PatchBody = {
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
+    if (!id || typeof id !== "string") {
+      return NextResponse.json({ error: "Invalid board ID" }, { status: 400 });
+    }
+
     const user = await getDbUserOrUpsert();
     const board = await getBoard(user.id, id);
     if (!board) {
@@ -39,7 +43,14 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       update.appState = body.appState;
     }
     if (body.files && typeof body.files === "object") update.files = body.files;
-    if (body.thumbnail !== undefined) update.thumbnail = body.thumbnail;
+    if (typeof body.thumbnail === "string") {
+      // 2MB ceiling on base64 thumbnail to protect database storage
+      if (body.thumbnail.length <= 2_000_000) {
+        update.thumbnail = body.thumbnail;
+      }
+    } else if (body.thumbnail === null) {
+      update.thumbnail = null;
+    }
     if (typeof body.favorited === "boolean") update.favorited = body.favorited;
     if (body.share === "enable" && !board.shareToken) {
       update.shareToken = randomUUID().replace(/-/g, "");
@@ -85,6 +96,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 export async function DELETE(request: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
+    if (!id || typeof id !== "string") {
+      return NextResponse.json({ error: "Invalid board ID" }, { status: 400 });
+    }
     const user = await getDbUserOrUpsert();
     const board = await getBoard(user.id, id);
     if (!board) {

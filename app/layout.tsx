@@ -22,8 +22,19 @@ const hostGrotesk = Host_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "AI Whiteboard",
-  description: "Sketch, diagram and mockup with AI on an infinite canvas.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://ai-whiteboard.local",
+  ),
+  title: {
+    default: "AI Whiteboard — AI-Powered Infinite Canvas",
+    template: "%s | AI Whiteboard",
+  },
+  description: "Sketch, diagram, and mockup with AI on an infinite canvas.",
+  openGraph: {
+    title: "AI Whiteboard",
+    description: "Sketch, diagram, and mockup with AI on an infinite canvas.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
