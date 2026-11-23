@@ -20,7 +20,7 @@
 - [9. API Reference](#9-api-reference)
 - [10. Frontend Architecture](#10-frontend-architecture)
 - [11. AI Integration](#11-ai-integration)
-- [12]([[docs/PROFESSIONAL_DOCUMENTATION.md]]#12-exports--sharing)
+- [12. Exports & Sharing](#12-exports--sharing)
 - [13. State Management](#13-state-management)
 - [14. Design System & Styling](#14-design-system--styling)
 - [15. Configuration & Environment](#15-configuration--environment)
@@ -142,7 +142,7 @@ sequenceDiagram
 | Category | Technology | Version | Purpose |
 | --- | --- | --- | --- |
 | **Runtime** | Node.js | 18+ | JavaScript runtime |
-| **Framework** | Next.js | 16.4.2 | Full-stack React framework with App Router |
+| **Framework** | Next.js | 16.4.6 | Full-stack React framework with App Router |
 | **Library** | React | 19.3.0 | UI library with Server Components |
 | **Language** | TypeScript | 5.x | Static type checking |
 | **Build Tool** | Turbopack | Built-in | Fast development and builds |

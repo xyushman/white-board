@@ -94,7 +94,7 @@ graph TB
 
 | Layer | Technology | Purpose |
 | --- | --- | --- |
-| Framework | Next.js 16.4.2, React 19.3.0 | App Router, SSR/RSC, routing |
+| Framework | Next.js 16.4.6, React 19.3.0 | App Router, SSR/RSC, routing |
 | Language | TypeScript 5 | Type safety |
 | Styling | Tailwind CSS v4 | Utility-first styling |
 | UI Components | shadcn/ui + Base UI | Primitives and composed components |
@@ -172,7 +172,7 @@ lib/
 | id | text (PK) | Clerk user id |
 | name | text | Display name |
 | email | text (unique) | Email |
-| credit | integer | Default 3, decremented on AI generation |
+| credit | integer | Default 3, decremented on board creation and AI generation |
 | created_at | timestamp(tz) | Default now |
 
 ### `whiteboards`
@@ -197,7 +197,7 @@ lib/
 | Method | Route | Auth | Purpose |
 | --- | --- | --- | --- |
 | GET | `/api/user` | Required | Get current user + credits |
-| POST | `/api/boards` | Required | Create board (costs 0, returns credit) |
+| POST | `/api/boards` | Required | Create board (atomic credit deduction, returns new credit) |
 | GET | `/api/boards?scope=active\|archived\|trashed` | Required | List boards by scope |
 | GET | `/api/boards/[id]` | Required | Get board by id (owner only) |
 | PATCH | `/api/boards/[id]` | Required | Update title/elements/appState/files/thumbnail/favorited/share enable/disable |
@@ -265,9 +265,9 @@ All exports sanitize filename and trigger browser download.
 ## Credits System
 
 - **Initial**: New users get 3 credits (`users.credit` default 3).
-- **AI Usage**: Each `POST /api/ai` decrements credit by 1 (if sufficient). Returns updated credit in response.
+- **AI Usage**: Each `POST /api/ai` decrements credit by 1 (if sufficient), and each `POST /api/boards` also decrements 1. Both use an atomic conditional SQL update; returns updated credit in the response.
 - **Display**: `CreditBadge` shows remaining credits in header.
-- **Enforcement**: Server checks credits before calling Gemini.
+- **Enforcement**: Server checks credits before creating a board or calling Gemini. Template creation also consumes a credit because it calls `POST /api/boards`. No top-up/billing flow exists yet.
 
 ## State Management
 
@@ -337,7 +337,7 @@ All exports sanitize filename and trigger browser download.
 - **Share**: Public share only works with valid `shareToken` and non-deleted boards. No edit access in view mode.
 - **API**: Server validates all inputs, returns appropriate status codes.
 - **Secrets**: Never commit `.env.local`. Rotate keys if exposed.
-- **Credits**: Enforced server-side on AI generation.
+- **Credits**: Enforced server-side on board creation and AI generation.
 - **Soft deletes**: Trash prevents normal access; permanent delete requires explicit flag.
 - **XSS**: React/Next.js escaping, Excalidraw handles canvas rendering.
 - **Middleware**: Clerk middleware protects routes as configured in `proxy.ts`.

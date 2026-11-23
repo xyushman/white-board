@@ -4,7 +4,7 @@ A full-stack AI-powered whiteboard SaaS built with Next.js 16, React 19, Tailwin
 
 ## Tech Stack
 
-- **Framework**: Next.js 16.4.2 (Turbopack), React 19.3.0, TypeScript 5
+- **Framework**: Next.js 16.4.6 (Turbopack), React 19.3.0, TypeScript 5
 - **Styling**: Tailwind CSS v4, shadcn/ui (Base UI)
 - **Auth**: [Clerk](https://clerk.com/) (@clerk/nextjs@7.9.18)
 - **Database**: [Neon](https://neon.tech/) Postgres + [Drizzle ORM](https://orm.drizzle.team/)
