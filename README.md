@@ -12,7 +12,7 @@ A full-stack AI-powered whiteboard SaaS built with Next.js 16, React 19, Tailwin
 - **AI**: [Google Gemini](https://ai.google.dev/) (@google/genai@2.30.0)
 - **State**: Zustand
 - **Animation**: GSAP + Lenis + Motion
-- **Utils**: html-to-image, jspdf, sonner
+- **Utils**: jspdf, sonner, lucide-react
 
 ## Features
 
@@ -24,7 +24,7 @@ A full-stack AI-powered whiteboard SaaS built with Next.js 16, React 19, Tailwin
 - **Templates Gallery**: Start from curated templates (retro, onboarding flow, architecture, wireframe, mind map, mobile) that create a board and pre-fill the AI helper.
 - **Exports**: Export boards as PNG, SVG, or PDF from the workspace header.
 - **Favorites & Search**: Star boards and filter by favorites or title search.
-- **Credits System**: Per-user credits for AI generation with usage tracking.
+- **Credits System**: One shared pool of per-user credits; creating a board and generating with AI each spend 1 credit atomically, and AI failures refund it.
 - **Soft Delete / Archive**: Move boards to trash or archive from the dashboard.
 
 ## Getting Started
@@ -63,11 +63,11 @@ Push the schema to your Neon database:
 npm run db:push
 ```
 
-Or generate and run migrations:
+Or generate migrations and apply them with drizzle-kit directly (there is no `db:migrate` npm script):
 
 ```bash
 npm run db:generate
-npm run db:migrate
+npx drizzle-kit migrate
 ```
 
 ### Development
@@ -102,6 +102,17 @@ components/
 db/                    # Drizzle schema and client
 lib/                   # Types, utils, AI tools, export, stores
 ```
+
+## Study Documentation
+
+A complete, source-grounded 26-chapter study guide is included:
+
+- **Combined PDF:** [`docs/AI-Whiteboard-Study-Guide.pdf`](docs/AI-Whiteboard-Study-Guide.pdf)
+- **Master index / Phase 1 analysis:** [`docs/LEARNING_GUIDE.md`](docs/LEARNING_GUIDE.md)
+- **Chapters:** [`docs/chapters/`](docs/chapters/) — 01 Project Overview → 26 Final Revision and Cheat Sheet
+- **Interview prep:** [`docs/PORTFOLIO_AND_INTERVIEW.md`](docs/PORTFOLIO_AND_INTERVIEW.md)
+
+Regenerate the PDF after editing any chapter with `node scripts/generate-study-pdf.mjs` (requires Google Chrome).
 
 ## Notes
 

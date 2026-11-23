@@ -22,9 +22,71 @@ const HTML_OUT = join(tmpdir(), `aiwb-study-guide-${process.pid}.html`);
 
 const DOCS = [
   { file: "docs/LEARNING_GUIDE.md", label: "Part I — Learning Guide (Phase 1 Analysis)" },
-  { file: "docs/chapters/01-project-overview.md", label: "Part II — Chapter 1: Project Overview" },
-  { file: "docs/PORTFOLIO_AND_INTERVIEW.md", label: "Part III — Portfolio & Interview Preparation" },
+  ...[
+    ["01", "Project Overview"],
+    ["02", "Problem Statement and Objectives"],
+    ["03", "Requirements Analysis"],
+    ["04", "Technology Stack"],
+    ["05", "System Architecture"],
+    ["06", "Folder Structure and Codebase Explanation"],
+    ["07", "Development Methodology"],
+    ["08", "Design Patterns and Engineering Principles"],
+    ["09", "Frontend Deep Dive"],
+    ["10", "Backend Deep Dive"],
+    ["11", "Database Design"],
+    ["12", "API Documentation"],
+    ["13", "Authentication and Security"],
+    ["14", "Feature-by-Feature Implementation"],
+    ["15", "End-to-End Data Flow"],
+    ["16", "Error Handling and Validation"],
+    ["17", "Testing Strategy"],
+    ["18", "Performance and Optimization"],
+    ["19", "Deployment and DevOps"],
+    ["20", "Challenges Faced and Solutions"],
+    ["21", "Technical Limitations and Future Enhancements"],
+    ["22", "Project Explanation for Interviews"],
+    ["23", "Technical Interview Questions and Answers"],
+    ["24", "Advanced Cross-Questioning"],
+    ["25", "Rebuilding the Project From Scratch"],
+    ["26", "Final Revision Notes and Cheat Sheet"],
+  ].map(([n, title]) => ({
+    file: `docs/chapters/${n}-${titleFileName(n, title)}.md`,
+    label: `Chapter ${Number(n)} — ${title}`,
+  })),
+  { file: "docs/PORTFOLIO_AND_INTERVIEW.md", label: "Final — Portfolio & Interview Preparation" },
 ];
+
+// Chapter filenames use short slugs that do not always match the display title.
+function titleFileName(n, title) {
+  const map = {
+    "02": "problem-statement-and-objectives",
+    "03": "requirements-analysis",
+    "04": "technology-stack",
+    "05": "system-architecture",
+    "06": "folder-structure-and-codebase",
+    "07": "development-methodology",
+    "08": "design-patterns-and-principles",
+    "09": "frontend-deep-dive",
+    "10": "backend-deep-dive",
+    "11": "database-design",
+    "12": "api-documentation",
+    "13": "authentication-and-security",
+    "14": "feature-by-feature",
+    "15": "end-to-end-data-flow",
+    "16": "error-handling-and-validation",
+    "17": "testing-strategy",
+    "18": "performance-and-optimization",
+    "19": "deployment-and-devops",
+    "20": "challenges-and-solutions",
+    "21": "limitations-and-future-enhancements",
+    "22": "project-explanation-for-interviews",
+    "23": "technical-interview-questions",
+    "24": "advanced-cross-questioning",
+    "25": "rebuilding-from-scratch",
+    "26": "final-revision-and-cheat-sheet",
+  };
+  return map[n] ?? title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
 
 const escapeHtml = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -129,11 +191,11 @@ hr { border: 0; border-top: 1px solid #ddd; margin: 14pt 0; }
 <section class="cover">
   <div class="rule"></div>
   <h1>AI Whiteboard<br>Complete Study Guide</h1>
-  <div class="sub">Source-grounded documentation: analysis, Chapter 1, and interview preparation.</div>
+  <div class="sub">Source-grounded documentation: analysis, 26 chapters, and interview preparation.</div>
   <div class="meta">
     Built for: the project author<br>
     Method: every claim traces to a file in this repository<br>
-    Contents: LEARNING_GUIDE.md + Chapter 1 + PORTFOLIO_AND_INTERVIEW.md<br>
+    Contents: Learning Guide + all 26 chapters + Portfolio &amp; Interview Preparation<br>
     Generated: 23 November 2026
   </div>
   <div class="foot">Study one chapter at a time. Answer the checks at the end of each chapter before moving on.</div>
@@ -154,17 +216,22 @@ ${parts.join("\n")}
     flowchart: { curve: "basis", useMaxWidth: true },
     sequence: { useMaxWidth: true }
   });
+  window.__MERMAID_ERRORS__ = [];
   (async function () {
-    try {
-      await mermaid.run({ querySelector: "div.mermaid" });
-    } catch (err) {
-      document.body.setAttribute("data-mermaid-error", String(err));
-      document.querySelectorAll("div.mermaid").forEach(function (el) {
-        if (!el.querySelector("svg")) el.textContent = "Diagram failed to render: " + String(err);
-      });
-    } finally {
-      window.__PDF_READY__ = true;
+    const nodes = document.querySelectorAll("div.mermaid");
+    for (let i = 0; i < nodes.length; i++) {
+      const el = nodes[i];
+      try {
+        const out = await mermaid.render("pdf-diagram-" + i, el.textContent.trim());
+        el.innerHTML = out.svg;
+      } catch (err) {
+        const msg = (err && (err.message || err.str)) || String(err);
+        window.__MERMAID_ERRORS__.push(i + ": " + msg);
+        console.error("Mermaid diagram " + i + " failed: " + msg);
+        el.textContent = "Diagram " + i + " failed to render: " + msg;
+      }
     }
+    window.__PDF_READY__ = true;
   })();
 </script>
 </body></html>`;
@@ -244,10 +311,10 @@ try {
   }
 
   const diag = await send("Runtime.evaluate", {
-    expression: "document.body.getAttribute('data-mermaid-error') || 'ok'",
+    expression: "JSON.stringify(window.__MERMAID_ERRORS__ || [])",
     returnByValue: true,
   });
-  console.log("Mermaid status:", diag.result.value);
+  console.log("Mermaid failures:", diag.result.value);
 
   const pdf = await send("Page.printToPDF", {
     printBackground: true,

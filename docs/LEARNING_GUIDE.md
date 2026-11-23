@@ -231,34 +231,38 @@ proxy.ts               Clerk middleware
 
 # DOCUMENTATION ROADMAP
 
-| # | Chapter | Status |
+All 26 chapters are written in `docs/chapters/`. Every chapter ends with a revision summary, 5 knowledge checks, 3 practical exercises, and 5 interview questions.
+
+| # | Chapter | File |
 | --- | --- | --- |
-| 1 | Project Overview | ✅ Available: `docs/chapters/01-project-overview.md` |
-| 2 | Problem Statement and Objectives | Planned |
-| 3 | Requirements Analysis | Planned |
-| 4 | Technology Stack (deep dive + tradeoffs) | Planned |
-| 5 | System Architecture (diagrams, boundaries) | Planned |
-| 6 | Folder Structure and Codebase Explanation | Planned |
-| 7 | Development Methodology (what is actually used) | Planned |
-| 8 | Design Patterns and Engineering Principles | Planned |
-| 9 | Frontend Deep Dive | Planned |
-| 10 | Backend Deep Dive | Planned |
-| 11 | Database Design | Planned |
-| 12 | API Documentation | Planned |
-| 13 | Authentication and Security | Planned |
-| 14 | Feature-by-Feature Implementation | Planned |
-| 15 | End-to-End Data Flow | Planned |
-| 16 | Error Handling and Validation | Planned |
-| 17 | Testing Strategy | Planned |
-| 18 | Performance and Optimization | Planned |
-| 19 | Deployment and DevOps | Planned |
-| 20 | Challenges Faced and Solutions | Planned |
-| 21 | Technical Limitations and Future Enhancements | Planned |
-| 22 | Project Explanation for Interviews | Planned |
-| 23 | Technical Interview Questions and Answers | Planned |
-| 24 | Advanced Cross-Questioning | Planned |
-| 25 | Rebuilding the Project From Scratch | Planned |
-| 26 | Final Revision Notes and Cheat Sheet | Planned |
+| 1 | Project Overview | `docs/chapters/01-project-overview.md` |
+| 2 | Problem Statement and Objectives | `docs/chapters/02-problem-statement-and-objectives.md` |
+| 3 | Requirements Analysis | `docs/chapters/03-requirements-analysis.md` |
+| 4 | Technology Stack (deep dive + tradeoffs) | `docs/chapters/04-technology-stack.md` |
+| 5 | System Architecture (diagrams, boundaries) | `docs/chapters/05-system-architecture.md` |
+| 6 | Folder Structure and Codebase Explanation | `docs/chapters/06-folder-structure-and-codebase.md` |
+| 7 | Development Methodology (what is actually used) | `docs/chapters/07-development-methodology.md` |
+| 8 | Design Patterns and Engineering Principles | `docs/chapters/08-design-patterns-and-principles.md` |
+| 9 | Frontend Deep Dive | `docs/chapters/09-frontend-deep-dive.md` |
+| 10 | Backend Deep Dive | `docs/chapters/10-backend-deep-dive.md` |
+| 11 | Database Design | `docs/chapters/11-database-design.md` |
+| 12 | API Documentation | `docs/chapters/12-api-documentation.md` |
+| 13 | Authentication and Security | `docs/chapters/13-authentication-and-security.md` |
+| 14 | Feature-by-Feature Implementation | `docs/chapters/14-feature-by-feature.md` |
+| 15 | End-to-End Data Flow | `docs/chapters/15-end-to-end-data-flow.md` |
+| 16 | Error Handling and Validation | `docs/chapters/16-error-handling-and-validation.md` |
+| 17 | Testing Strategy | `docs/chapters/17-testing-strategy.md` |
+| 18 | Performance and Optimization | `docs/chapters/18-performance-and-optimization.md` |
+| 19 | Deployment and DevOps | `docs/chapters/19-deployment-and-devops.md` |
+| 20 | Challenges Faced and Solutions | `docs/chapters/20-challenges-and-solutions.md` |
+| 21 | Technical Limitations and Future Enhancements | `docs/chapters/21-limitations-and-future-enhancements.md` |
+| 22 | Project Explanation for Interviews | `docs/chapters/22-project-explanation-for-interviews.md` |
+| 23 | Technical Interview Questions and Answers | `docs/chapters/23-technical-interview-questions.md` |
+| 24 | Advanced Cross-Questioning | `docs/chapters/24-advanced-cross-questioning.md` |
+| 25 | Rebuilding the Project From Scratch | `docs/chapters/25-rebuilding-from-scratch.md` |
+| 26 | Final Revision Notes and Cheat Sheet | `docs/chapters/26-final-revision-and-cheat-sheet.md` |
+
+**Combined PDF:** `docs/AI-Whiteboard-Study-Guide.pdf` — generated from the guide, all 26 chapters, and the interview document. Regenerate with `node scripts/generate-study-pdf.mjs`.
 
 Existing reference docs: `README.md`, `docs/DETAILED_DOCUMENTATION.md`, `docs/PROFESSIONAL_DOCUMENTATION.md`, `docs/PORTFOLIO_AND_INTERVIEW.md`.
 
